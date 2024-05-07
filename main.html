@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</head>
+<body style="background-image: linear-gradient(to right,#662D8C,#1BFFFF);background-attachment: fixed;">
+
+
+    <style>
+        .one{
+            background-color: rgb(197, 197, 197); width: 400px; height: 400px;
+            text-align: center;
+          font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            padding: 20px;
+        }
+    </style>
+
+
+    <div style="float: right;" class="me-1 mt-2">
+        <button class="btn btn-danger" onclick="loclogout()" >LogOut</button>
+    </div><br>
+  
+    <div class="container mt-1">
+        <div style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); width: 1100px; height: 590px;" class="rounded">
+            <div class="text-center p-5" style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;">
+                
+                <h1 class="text-white">Wallet <span style="color: rgb(255, 187, 0);">Watcher</span> </h1>
+            
+                <hr>
+            </div>
+            
+            <div class="row" style="justify-content: space-evenly; margin-top: -4%;">
+                <div class="one col-6 rounded">
+                <h2> Balance</h2><br>
+                <h4>₹ <span id="change">0/-</span></h4>
+                <hr>
+                
+                <h2 style="color: green;" class="mt-4">Add Income</h2>
+                <input type="text" id="inc" placeholder="Enter Income type" class="form-control mt-3">
+                <br>
+                <input type="text" id="amnt" placeholder="Enter Amount" class="form-control">
+                <br>
+                <button class="btn btn-success form-control" onclick="addincome()">Add Income</button>
+
+                </div>
+                <div class="one col-6 rounded">
+                    <h2>Expense</h2><br>
+                    <h4>₹ <span id="changeb">0/-</span> </h4>
+                <hr>
+                
+                <h2 style="color: rgb(255, 0, 0);" class="mt-4">Add Expense</h2>
+                <input type="text" id="exptype" placeholder="Enter Expense type" class="form-control mt-3">
+                <br>
+                <input type="text" id="expamnt" placeholder="Enter Amount" class="form-control">
+                <br>
+                <button class="btn btn-danger form-control" onclick="addexpense()" >Add Expense</button>
+
+                </div>
+            </div>
+      
+       <div class="text-center mt-2">
+        <button class="btn btn-warning" onclick="alwin()">Clear All</button>
+       </div>
+
+
+        </div>
+    </div>
+    <br>
+    <div class="container mt-1">
+        <div style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); width: 1100px; height: 590px;" class="rounded p-4">
+            <h2 class="text-center text-white" style="font-family: 'Times New Roman', Times, serif;">Income and Expense Details</h2>
+            <hr>
+            <br>
+            <div class="row text-center" style="font-family: 'Times New Roman', Times, serif;">
+                <div class="col-6">
+                    <h2 class="text-white">Income</h2>
+
+                    <table class="table mx-auto">
+                        <thead class="fw-medium table-dark">
+                            <tr style="border-bottom: 5px solid chartreuse;">
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Balance</th>
+                                <th>Date & Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="incometable"></tbody>
+                    </table>
+                </div>
+                <div class="col-6">
+                    <h2>Expense</h2>
+                    <table class="table mx-auto">
+                        <thead class="fw-medium table-dark">
+                            <tr style="border-bottom: 5px solid chartreuse;">
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Balance</th>
+                                <th>Date & Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="exptable"></tbody>
+                    </table>
+                </div>
+            </div>
+<br><br>
+            <!-- <div class="row mx-auto text-center mt-4" style="font-family: 'Times New Roman', Times, serif;">
+                <h3 >Expense Pie Chart</h3>
+                <div class="text-center">
+                <button class="btn btn-primary w-25">Show Pie-Chart</button>
+            </div>
+        </div> -->
+
+
+
+
+            </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+            
+<script>
+    // Retrieve the logged-in username from local storage
+let loggedKe = localStorage.getItem("loggedKey");
+
+// Function to update the UI with financial data
+function updateUI() {
+    if (loggedKe) {
+        // Retrieve the user's accounts from local storage
+        let accounts = JSON.parse(localStorage.getItem(loggedKey)) || { income: 0, expenses: 0 };
+
+        // Update balance, income, and expenses in the HTML
+        document.getElementById("change").innerHTML = `${accounts.income}/-`;
+        document.getElementById("changeb").innerHTML = `${accounts.expense}/-`;
+
+        // Display income and expenses in the table
+        displayTable("incometable", accounts.income);
+        displayTable("exptable", accounts.expense);
+    } else {
+        console.log("Username not found in local storage");
+    }
+}
+
+// Function to display data in a table
+function displayTable(tableId, data) {
+    let table = document.getElementById(tableId);
+    table.innerHTML = ""; // Clear existing rows
+
+    data.forEach(entry => {
+        let newRow = table.insertRow();
+        newRow.innerHTML = `
+            <tr style="border-bottom: 6px green solid;">
+                <td>${entry.type}</td>
+                <td>${entry.amount > 0 ? '+' : '-'}${Math.abs(entry.amount)}</td>
+                <td>${entry.balance} ₹</td>
+                <td>${entry.date}</td>
+            </tr>
+        `;
+    });
+}
+
+
+window.onload = updateUI;
+    
+    // addincome//////////////////////////////////////////
+    // Retrieve the logged-in username from local storage
+    let loggedKey = localStorage.getItem("loggedKey");
+
+    function addincome() {
+        let inc = document.getElementById("inc").value;
+        let amnt = document.getElementById("amnt").value;
+        amnt = Math.floor(amnt);
+
+     
+
+        if (loggedKey) {
+            // Retrieve the user's accounts from local storage
+            let accounts = JSON.parse(localStorage.getItem(loggedKey)) || { income: 0, expenses: 0 };
+            accounts.income += amnt;
+
+            // Update the user's accounts in local storage
+            localStorage.setItem(loggedKey, JSON.stringify(accounts));
+
+            alert("Income added successfully");
+            document.getElementById("inc").value = "";
+            document.getElementById("amnt").value = "";
+
+            // Update the span with the new total income
+            let changeSpan = document.getElementById("change");
+            changeSpan.innerHTML = ` ${accounts.income}/-`;
+
+            let now = new Date(); // Get the current date and time
+        let date = `${now.toLocaleDateString()} ${now.getHours()}:${now.getMinutes()} :${now.getSeconds()}`; // Format date and time
+
+            let incometable = document.getElementById("incometable");
+                let newRow = incometable.insertRow();
+                newRow.innerHTML = `<tr <tr style="border-bottom: 6px green solid; ">
+                         <td>${inc}</td>  
+                         <td>+${amnt}</td> 
+                         <td>${accounts.income} ₹</td> 
+                         <td>${date}</td>  
+    </tr>
+                `;
+
+        } else {
+            console.log("Username not found in local storage");
+        }
+    }
+
+// add expenses///////////////////////////////////////////////////////
+let expamnt=0;
+let logged = localStorage.getItem("loggedKey");
+function addexpense(){
+    let exptype=document.getElementById("exptype").value;
+    let expamnt=document.getElementById("expamnt").value;
+    expamnt=Math.floor(expamnt);
+if(logged){
+    let accounts=JSON.parse(localStorage.getItem(loggedKey)) || { income: 0, expenses: 0 };
+    if(expamnt>accounts.income){
+        alert("Insufficient Amount")
+    }else{
+        accounts.income-=expamnt;
+        accounts.expense+=expamnt;
+
+localStorage.setItem(loggedKey,JSON.stringify(accounts));
+alert("Expense added successfully")
+
+let changeSpan = document.getElementById("change");
+            changeSpan.innerHTML = ` ${accounts.income}/-`;
+let changeSpanb=document.getElementById("changeb");
+    changeSpanb.innerHTML=`${accounts.expense}/-`   
+    
+   document.getElementById("exptype").value=""
+    document.getElementById("expamnt").value=""
+    
+    let now = new Date(); // Get the current date and time
+        let date = `${now.toLocaleDateString()} ${now.getHours()}:${now.getMinutes()} :${now.getSeconds()}`; // Format date and time
+
+            let incometable = document.getElementById("exptable");
+                let newRow = incometable.insertRow();
+                newRow.innerHTML = `<tr <tr style="border-bottom: 6px green solid; ">
+                         <td>${exptype}</td>  
+                         <td>-${expamnt}</td> 
+                         <td>${accounts.income} ₹</td> 
+                         <td>${date}</td>  
+    </tr>
+                `;
+   
+
+}
+    }
+  
+
+}
+
+
+
+
+
+function alwin(){
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function loclogout() {
+   
+    const userConfirmed = confirm("Are you sure you want to log out?");
+
+
+    if (userConfirmed) {
+  
+        window.location = "./index.html";
+    } else {
+
+        console.log("Logout canceled");
+    }
+}
+
+</script>
+            
+</body>
+</html>
